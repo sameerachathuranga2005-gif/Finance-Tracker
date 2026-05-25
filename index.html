@@ -1,0 +1,2216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance Tracker - Sri Lanka</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Sinhala:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #070c0a;
+    --bg2: #0d1411;
+    --bg3: #131b17;
+    --card: #0f1612;
+    --card2: #161f1a;
+    --card3: #1c2720;
+    --border: rgba(74,210,120,0.08);
+    --border2: rgba(74,210,120,0.18);
+    --border3: rgba(74,210,120,0.30);
+    --accent: #4ad278;
+    --accent2: #2fb85c;
+    --accent-glow: rgba(74,210,120,0.25);
+    --accent-dim: rgba(74,210,120,0.06);
+    --accent-dim2: rgba(74,210,120,0.12);
+    --red: #f05060;
+    --red-glow: rgba(240,80,96,0.25);
+    --red-dim: rgba(240,80,96,0.08);
+    --text: #e8ede9;
+    --text2: #8fa494;
+    --text3: #5a6e5e;
+    --yellow: #f0c050;
+    --blue: #60a0f0;
+    --orange: #f0a050;
+    --purple: #a060f0;
+    --r: 16px;
+    --r2: 20px;
+    --r3: 24px;
+  }
+
+  body {
+    font-family: 'Inter', 'Noto Sans Sinhala', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+    overflow-x: hidden;
+  }
+  body.lang-si { font-family: 'Noto Sans Sinhala', 'Inter', sans-serif; }
+
+  /* ANIMATED BACKGROUND */
+  .bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+    animation: orbFloat 20s ease-in-out infinite;
+  }
+  .bg-orb:nth-child(1) {
+    width: 500px; height: 500px;
+    background: var(--accent);
+    top: -10%; left: -10%;
+    animation-delay: 0s;
+  }
+  .bg-orb:nth-child(2) {
+    width: 400px; height: 400px;
+    background: var(--blue);
+    bottom: -5%; right: -5%;
+    animation-delay: -7s;
+    animation-duration: 25s;
+  }
+  .bg-orb:nth-child(3) {
+    width: 300px; height: 300px;
+    background: var(--orange);
+    top: 40%; left: 60%;
+    animation-delay: -14s;
+    animation-duration: 18s;
+  }
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(50px, -30px) scale(1.1); }
+    50% { transform: translate(-30px, 50px) scale(0.9); }
+    75% { transform: translate(20px, 20px) scale(1.05); }
+  }
+
+  .particles {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    width: 3px; height: 3px;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleRise 8s linear infinite;
+  }
+  @keyframes particleRise {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.5; }
+    90% { opacity: 0.5; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+
+  /* AUTH SCREEN */
+  .auth-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  .auth-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .auth-box {
+    background: linear-gradient(145deg, var(--card), var(--card2));
+    border: 1px solid var(--border);
+    border-radius: var(--r3);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    animation: authSlide 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes authSlide {
+    from { opacity: 0; transform: translateY(40px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .auth-logo {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .auth-logo-icon {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, var(--accent-dim2), var(--accent-dim));
+    border: 1px solid var(--border2);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 1rem;
+    animation: iconGlow 3s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+  }
+  .auth-logo-icon::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(74,210,120,0.2) 100%);
+  }
+  .auth-logo h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--text), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .auth-logo p {
+    color: var(--text3);
+    font-size: 0.8rem;
+    margin-top: 4px;
+  }
+  .auth-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+  .auth-tab {
+    flex: 1;
+    padding: 0.7rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text3);
+    border-radius: var(--r);
+    transition: all 0.3s;
+  }
+  .auth-tab.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0a1a0f;
+    border-color: var(--accent);
+    box-shadow: 0 4px 15px var(--accent-glow);
+  }
+  .auth-tab:hover:not(.active) {
+    border-color: var(--border2);
+    color: var(--text2);
+  }
+  .auth-form { display: none; }
+  .auth-form.active { display: block; animation: fadeIn 0.4s; }
+  .auth-btn {
+    width: 100%;
+    padding: 0.9rem;
+    border-radius: var(--r);
+    border: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0a1a0f;
+    box-shadow: 0 4px 20px var(--accent-glow);
+    transition: all 0.3s;
+    margin-top: 0.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .auth-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s;
+  }
+  .auth-btn:hover::before { left: 100%; }
+  .auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--accent-glow);
+  }
+  .auth-btn:active { transform: scale(0.97); }
+  .auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text3);
+    font-size: 0.75rem;
+  }
+  .auth-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .auth-footer a:hover { text-decoration: underline; }
+  .auth-error {
+    background: var(--red-dim);
+    border: 1px solid rgba(240,80,96,0.2);
+    color: var(--red);
+    padding: 0.7rem 1rem;
+    border-radius: var(--r);
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    display: none;
+    animation: shake 0.4s;
+  }
+  .auth-error.show { display: block; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+
+  /* HEADER */
+  .header {
+    width: 100%;
+    max-width: 1100px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 2;
+    animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--accent-dim2), var(--accent-dim));
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    position: relative;
+    overflow: hidden;
+    animation: iconGlow 3s ease-in-out infinite;
+  }
+  .logo-icon::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(74,210,120,0.2) 100%);
+  }
+  @keyframes iconGlow {
+    0%, 100% { box-shadow: 0 0 20px var(--accent-glow); }
+    50% { box-shadow: 0 0 40px var(--accent-glow), 0 0 60px rgba(74,210,120,0.1); }
+  }
+  .logo-text h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    background: linear-gradient(135deg, var(--text), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .logo-text p {
+    font-size: 0.72rem;
+    color: var(--text3);
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-month {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text2);
+    background: linear-gradient(135deg, var(--card), var(--card2));
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 24px;
+    letter-spacing: 0.04em;
+    backdrop-filter: blur(10px);
+    animation: fadeIn 1s 0.3s both;
+  }
+  .header-badge {
+    font-size: 0.65rem;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1px solid var(--border2);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    animation: fadeIn 1s 0.5s both;
+  }
+  .lang-toggle {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .lang-toggle:hover {
+    border-color: var(--border2);
+    color: var(--text);
+    background: var(--card2);
+  }
+  .user-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--card), var(--card2));
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 24px;
+    font-size: 0.75rem;
+    color: var(--text2);
+    animation: fadeIn 1s 0.4s both;
+  }
+  .user-badge .avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #0a1a0f;
+  }
+  .logout-btn {
+    background: none;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .logout-btn:hover { color: var(--red); background: var(--red-dim); }
+
+  /* LAYOUT */
+  .main {
+    width: 100%;
+    max-width: 1100px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 1.5rem;
+    align-items: start;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* SUMMARY CARDS */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .sum-card {
+    background: linear-gradient(145deg, var(--card), var(--card2));
+    border: 1px solid var(--border);
+    border-radius: var(--r3);
+    padding: 1.4rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: cardReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .sum-card:nth-child(1) { animation-delay: 0.1s; }
+  .sum-card:nth-child(2) { animation-delay: 0.2s; }
+  .sum-card:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes cardReveal {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .sum-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--clr, var(--border));
+    border-radius: var(--r3) var(--r3) 0 0;
+  }
+  .sum-card::after {
+    content: '';
+    position: absolute;
+    top: -50%; right: -50%;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle, var(--clr-glow, transparent) 0%, transparent 70%);
+    opacity: 0.3;
+    transition: opacity 0.4s;
+  }
+  .sum-card.income { --clr: var(--accent); --clr-glow: var(--accent-glow); }
+  .sum-card.expense { --clr: var(--red); --clr-glow: var(--red-glow); }
+  .sum-card.balance { --clr: var(--blue); --clr-glow: rgba(96,160,240,0.3); }
+  .sum-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border2);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 30px var(--clr-glow);
+  }
+  .sum-card:hover::after { opacity: 0.5; }
+  .sum-label {
+    font-size: 0.7rem;
+    color: var(--text3);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sum-label .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--clr, var(--text3));
+    position: relative;
+  }
+  .sum-label .dot::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: var(--clr);
+    opacity: 0.3;
+    animation: dotPulse 2s ease-in-out infinite;
+  }
+  @keyframes dotPulse {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.5); opacity: 0; }
+  }
+  .sum-amount {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s;
+  }
+  .sum-card.income .sum-amount { color: var(--accent); text-shadow: 0 0 30px var(--accent-glow); }
+  .sum-card.expense .sum-amount { color: var(--red); text-shadow: 0 0 30px var(--red-glow); }
+  .sum-card.balance .sum-amount { color: var(--blue); text-shadow: 0 0 30px rgba(96,160,240,0.2); }
+  .sum-sub {
+    font-size: 0.75rem;
+    color: var(--text3);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sum-sub .trend {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .trend.up { background: var(--accent-dim); color: var(--accent); }
+  .trend.down { background: var(--red-dim); color: var(--red); }
+
+  /* CHART SECTION */
+  .chart-section {
+    background: linear-gradient(145deg, var(--card), var(--card2));
+    border: 1px solid var(--border);
+    border-radius: var(--r3);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    animation: cardReveal 0.8s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .chart-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border2), transparent);
+  }
+  .section-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border2), transparent);
+  }
+
+  /* BAR CHART */
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    opacity: 0;
+    animation: barSlide 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes barSlide {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .bar-label {
+    font-size: 0.75rem;
+    color: var(--text2);
+    width: 100px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--bg3);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-track::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    animation: shimmer 3s infinite;
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--bar-clr, var(--accent)), var(--bar-clr2, var(--accent2)));
+    transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .bar-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: barShimmer 2s infinite;
+  }
+  @keyframes barShimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .bar-val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    color: var(--text2);
+    width: 70px;
+    text-align: right;
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+  .bar-pct {
+    font-size: 0.65rem;
+    color: var(--text3);
+    width: 36px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .empty-chart {
+    font-size: 0.85rem;
+    color: var(--text3);
+    text-align: center;
+    padding: 2rem 0;
+    animation: fadeIn 0.5s;
+  }
+  .empty-chart-icon {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.5;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* TRANSACTION LIST */
+  .txn-section {
+    background: linear-gradient(145deg, var(--card), var(--card2));
+    border: 1px solid var(--border);
+    border-radius: var(--r3);
+    overflow: hidden;
+    animation: cardReveal 0.8s 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    position: relative;
+  }
+  .txn-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border2), transparent);
+  }
+  .txn-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .txn-list {
+    max-height: 420px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border2) transparent;
+  }
+  .txn-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: itemSlide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateX(-20px);
+    position: relative;
+    overflow: hidden;
+  }
+  .txn-item:nth-child(1) { animation-delay: 0.05s; }
+  .txn-item:nth-child(2) { animation-delay: 0.1s; }
+  .txn-item:nth-child(3) { animation-delay: 0.15s; }
+  .txn-item:nth-child(4) { animation-delay: 0.2s; }
+  .txn-item:nth-child(5) { animation-delay: 0.25s; }
+  .txn-item:nth-child(6) { animation-delay: 0.3s; }
+  .txn-item:nth-child(7) { animation-delay: 0.35s; }
+  .txn-item:nth-child(8) { animation-delay: 0.4s; }
+  @keyframes itemSlide {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .txn-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--item-clr, var(--accent));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .txn-item:hover::before { opacity: 1; }
+  .txn-item:hover {
+    background: linear-gradient(90deg, var(--accent-dim), transparent);
+    transform: translateX(4px);
+  }
+  .txn-item:last-child { border-bottom: none; }
+  .txn-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .txn-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.1) 100%);
+  }
+  .txn-icon.income { background: linear-gradient(135deg, rgba(74,210,120,0.15), rgba(74,210,120,0.05)); border: 1px solid rgba(74,210,120,0.2); }
+  .txn-icon.expense { background: linear-gradient(135deg, rgba(240,80,96,0.12), rgba(240,80,96,0.04)); border: 1px solid rgba(240,80,96,0.15); }
+  .txn-item:hover .txn-icon { transform: scale(1.1) rotate(5deg); }
+  .txn-info { flex: 1; min-width: 0; }
+  .txn-desc {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.3s;
+  }
+  .txn-item:hover .txn-desc { color: var(--accent); }
+  .txn-meta {
+    font-size: 0.72rem;
+    color: var(--text3);
+    margin-top: 3px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .txn-cat-badge {
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: all 0.3s;
+  }
+  .txn-item:hover .txn-cat-badge {
+    background: var(--accent-dim2);
+    transform: scale(1.05);
+  }
+  .txn-amount {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-right: 8px;
+    transition: all 0.3s;
+  }
+  .txn-amount.income { color: var(--accent); }
+  .txn-amount.expense { color: var(--red); }
+  .txn-item:hover .txn-amount { transform: scale(1.05); }
+  .txn-del {
+    background: none;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    line-height: 1;
+    opacity: 0.6;
+  }
+  .txn-del:hover {
+    color: var(--red);
+    background: var(--red-dim);
+    opacity: 1;
+    transform: scale(1.15) rotate(90deg);
+  }
+  .txn-empty {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: var(--text3);
+    font-size: 0.9rem;
+    animation: fadeIn 0.5s;
+  }
+  .txn-empty .big-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.4;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  /* FORM PANEL */
+  .form-panel {
+    background: linear-gradient(145deg, var(--card), var(--card2));
+    border: 1px solid var(--border);
+    border-radius: var(--r3);
+    overflow: hidden;
+    position: sticky;
+    top: 1.5rem;
+    animation: cardReveal 0.8s 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .form-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border2), transparent);
+  }
+  .form-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .form-tab {
+    flex: 1;
+    padding: 1rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--text3);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    position: relative;
+    overflow: hidden;
+  }
+  .form-tab::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    width: 0; height: 3px;
+    background: var(--tab-clr, var(--accent));
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateX(-50%);
+    border-radius: 3px 3px 0 0;
+  }
+  .form-tab.active::before { width: 60%; }
+  .form-tab.active.income {
+    color: var(--accent);
+    background: linear-gradient(180deg, transparent, var(--accent-dim));
+  }
+  .form-tab.active.expense {
+    color: var(--red);
+    background: linear-gradient(180deg, transparent, var(--red-dim));
+  }
+  .form-tab:hover:not(.active) {
+    color: var(--text2);
+    background: var(--bg3);
+  }
+  .form-body { padding: 1.5rem; }
+  .form-group { margin-bottom: 1.1rem; }
+  .form-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  input[type="email"],
+  input[type="password"],
+  select {
+    width: 100%;
+    background: linear-gradient(145deg, var(--bg3), var(--bg2));
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.8rem 1rem;
+    border-radius: var(--r);
+    font-family: 'Inter', 'Noto Sans Sinhala', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim), 0 0 20px var(--accent-glow);
+    transform: translateY(-1px);
+  }
+  input::placeholder { color: var(--text3); opacity: 0.6; }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6e5e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .btn-submit {
+    width: 100%;
+    padding: 0.95rem;
+    border-radius: var(--r);
+    border: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-top: 0.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-submit::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s;
+  }
+  .btn-submit:hover::before { left: 100%; }
+  .btn-submit.income {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0a1a0f;
+    box-shadow: 0 4px 20px var(--accent-glow);
+  }
+  .btn-submit.income:hover {
+    background: linear-gradient(135deg, #5adf88, var(--accent));
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--accent-glow);
+  }
+  .btn-submit.expense {
+    background: linear-gradient(135deg, var(--red), #d04050);
+    color: #fff;
+    box-shadow: 0 4px 20px var(--red-glow);
+  }
+  .btn-submit.expense:hover {
+    background: linear-gradient(135deg, #f56070, var(--red));
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--red-glow);
+  }
+  .btn-submit:active { transform: scale(0.97); }
+
+  /* CLEAR BTN */
+  .btn-clear {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text3);
+    font-family: 'Inter', 'Noto Sans Sinhala', sans-serif;
+    font-size: 0.75rem;
+    padding: 5px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+  }
+  .btn-clear:hover {
+    border-color: var(--red);
+    color: var(--red);
+    background: var(--red-dim);
+    transform: translateY(-1px);
+  }
+
+  /* FILTER */
+  .filter-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-family: 'Inter', 'Noto Sans Sinhala', sans-serif;
+    font-size: 0.72rem;
+    padding: 5px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    font-weight: 500;
+  }
+  .filter-btn:hover {
+    border-color: var(--border2);
+    color: var(--text);
+    transform: translateY(-1px);
+  }
+  .filter-btn.active {
+    background: linear-gradient(135deg, var(--accent-dim2), var(--accent-dim));
+    border-color: var(--border2);
+    color: var(--accent);
+    box-shadow: 0 2px 10px var(--accent-glow);
+  }
+
+  /* TOAST */
+  .toast-container {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .toast {
+    background: linear-gradient(145deg, var(--card2), var(--card3));
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 0.8rem 1.5rem;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    backdrop-filter: blur(20px);
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .toast-icon { font-size: 1.1rem; }
+
+  /* CONFIRM MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s;
+  }
+  .modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  .modal-box {
+    background: linear-gradient(145deg, var(--card), var(--card2));
+    border: 1px solid var(--border2);
+    border-radius: var(--r3);
+    padding: 2rem;
+    max-width: 380px;
+    width: 90%;
+    text-align: center;
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+  }
+  .modal-overlay.show .modal-box {
+    transform: scale(1) translateY(0);
+  }
+  .modal-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    animation: shake 0.5s ease-in-out;
+  }
+  @keyframes shake {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+  }
+  .modal-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .modal-text {
+    color: var(--text2);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  .modal-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .modal-btn {
+    padding: 0.7rem 1.5rem;
+    border-radius: var(--r);
+    border: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.04em;
+  }
+  .modal-btn.cancel {
+    background: var(--bg3);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .modal-btn.cancel:hover {
+    background: var(--card3);
+    color: var(--text);
+  }
+  .modal-btn.confirm {
+    background: linear-gradient(135deg, var(--red), #d04050);
+    color: #fff;
+    box-shadow: 0 4px 15px var(--red-glow);
+  }
+  .modal-btn.confirm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--red-glow);
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border3); }
+
+  /* ANIMATIONS */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .made-in-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 1rem;
+    padding: 6px 16px;
+    background: linear-gradient(135deg, var(--accent-dim2), var(--accent-dim));
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    animation: fadeIn 1s 0.6s both;
+    font-family: 'Outfit', sans-serif;
+    text-transform: uppercase;
+  }
+  .made-in-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: dotPulse 2s ease-in-out infinite;
+  }
+
+  /* FOOTER */
+  .app-footer {
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 3rem;
+    padding: 1.5rem;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 2;
+    animation: fadeIn 1s 0.8s both;
+  }
+  .app-footer-text {
+    font-size: 0.8rem;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .app-footer-heart {
+    color: var(--red);
+    animation: heartbeat 1.5s ease-in-out infinite;
+    display: inline-block;
+  }
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.2); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.15); }
+  }
+  .app-footer-brand {
+    background: linear-gradient(135deg, var(--accent), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+  }
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: 1fr 1fr; }
+    .sum-card.balance { grid-column: 1 / -1; }
+    .form-panel { position: static; }
+    .header { flex-direction: column; gap: 1rem; text-align: center; }
+    .header-right { flex-wrap: wrap; justify-content: center; }
+    .txn-header { flex-direction: column; align-items: flex-start; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+
+  /* DONUT CHART */
+  .donut-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    padding: 1rem 0;
+  }
+  .donut-chart {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    animation: donutSpin 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+  @keyframes donutSpin {
+    from { opacity: 0; transform: rotate(-90deg) scale(0.8); }
+    to { opacity: 1; transform: rotate(0) scale(1); }
+  }
+  .donut-chart svg {
+    transform: rotate(-90deg);
+    animation: svgSpin 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes svgSpin {
+    from { transform: rotate(-90deg); }
+    to { transform: rotate(-90deg); }
+  }
+  .donut-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .donut-center-label {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .donut-center-val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .donut-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: var(--text2);
+    animation: fadeInUp 0.5s both;
+  }
+  .legend-item:nth-child(1) { animation-delay: 0.1s; }
+  .legend-item:nth-child(2) { animation-delay: 0.2s; }
+  .legend-item:nth-child(3) { animation-delay: 0.3s; }
+  .legend-item:nth-child(4) { animation-delay: 0.4s; }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .legend-val {
+    font-weight: 600;
+    color: var(--text);
+    margin-left: auto;
+    padding-left: 1rem;
+  }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-mini {
+    background: linear-gradient(145deg, var(--card), var(--card2));
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 1rem;
+    text-align: center;
+    animation: cardReveal 0.6s both;
+    transition: all 0.3s;
+  }
+  .stat-mini:hover {
+    transform: translateY(-3px);
+    border-color: var(--border2);
+  }
+  .stat-mini-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  .stat-mini-label {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .stat-mini-val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* CURRENCY BADGE */
+  .currency-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, var(--accent-dim2), var(--accent-dim));
+    border: 1px solid var(--border2);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    animation: fadeIn 1s 0.7s both;
+  }
+  .currency-badge .flag { font-size: 0.9rem; }
+
+  /* TOOLTIP */
+  .tooltip {
+    position: relative;
+  }
+  .tooltip::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    background: var(--card3);
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 100;
+  }
+  .tooltip:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-2px);
+  }
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">💰</div>
+      <h2 data-en="FinanceTracker" data-si="මුදල් තොට">FinanceTracker</h2>
+      <p data-en="Sri Lanka's Personal Finance Manager" data-si="ශ්‍රී ලංකාවේ පුද්ගලික මුදල් කළමනාකරු">Sri Lanka's Personal Finance Manager</p>
+      <div class="made-in-badge">Made in 🇱🇰 Sameera</div>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabSignIn" data-en="Sign In" data-si="පිවිසෙන්න">Sign In</button>
+      <button class="auth-tab" id="tabSignUp" data-en="Sign Up" data-si="ලියාපදිංචි වන්න">Sign Up</button>
+    </div>
+    <div class="auth-error" id="authError"></div>
+    <div class="auth-form active" id="formSignIn">
+      <div class="form-group">
+        <label class="form-label" data-en="📧 Email" data-si="📧 විද්‍යුත් තැපෑල">📧 Email</label>
+        <input type="email" id="signinEmail" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-en="🔒 Password" data-si="🔒 මුරපදය">🔒 Password</label>
+        <input type="password" id="signinPassword" placeholder="••••••••">
+      </div>
+      <button class="auth-btn" id="btnSignIn" data-en="Sign In" data-si="පිවිසෙන්න">Sign In</button>
+    </div>
+    <div class="auth-form" id="formSignUp">
+      <div class="form-group">
+        <label class="form-label" data-en="👤 Full Name" data-si="👤 සම්පූර්ණ නම">👤 Full Name</label>
+        <input type="text" id="signupName" placeholder="John Doe">
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-en="📧 Email" data-si="📧 විද්‍යුත් තැපෑල">📧 Email</label>
+        <input type="email" id="signupEmail" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-en="🔒 Password" data-si="🔒 මුරපදය">🔒 Password</label>
+        <input type="password" id="signupPassword" placeholder="••••••••">
+      </div>
+      <button class="auth-btn" id="btnSignUp" data-en="Create Account" data-si="ගිණුම සාදන්න">Create Account</button>
+    </div>
+    <div class="auth-footer">
+      <span data-en="Language: " data-si="භාෂාව: ">Language: </span>
+      <a id="authLangToggle" data-en="සිංහල" data-si="English">සිංහල</a>
+    </div>
+  </div>
+</div>
+
+<!-- BACKGROUND EFFECTS -->
+<div class="bg-orb"></div>
+<div class="bg-orb"></div>
+<div class="bg-orb"></div>
+<div class="particles" id="particles"></div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">💰</div>
+    <div class="logo-text">
+      <h1 data-en="FinanceTracker" data-si="මුදල් තොට">FinanceTracker</h1>
+      <p data-en="Personal Money Manager" data-si="පුද්ගලික මුදල් කළමනාකරු">Personal Money Manager</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="currency-badge"><span class="flag">🇱🇰</span> LKR</div>
+    <div class="header-month" id="headerMonth"></div>
+    <div class="header-badge" data-en="Sri Lanka" data-si="ශ්‍රී ලංකාව">Sri Lanka</div>
+    <button class="lang-toggle" id="langToggle" title="Switch Language">
+      <span>🌐</span>
+      <span id="langLabel">සිංහල</span>
+    </button>
+    <div class="user-badge" id="userBadge" style="display:none">
+      <div class="avatar" id="userAvatar">U</div>
+      <span id="userName">User</span>
+      <button class="logout-btn" id="logoutBtn" data-en="Logout" data-si="ඉවත් වන්න">Logout</button>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+  <!-- LEFT COLUMN -->
+  <div>
+    <!-- MINI STATS -->
+    <div class="stats-row">
+      <div class="stat-mini">
+        <div class="stat-mini-icon">📊</div>
+        <div class="stat-mini-label" data-en="Total Txns" data-si="මුළු ගනුදෙනු">Total Txns</div>
+        <div class="stat-mini-val" id="statTotal">0</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-icon">💵</div>
+        <div class="stat-mini-label" data-en="Avg Income" data-si="සාමාන්‍ය ආදායම">Avg Income</div>
+        <div class="stat-mini-val" id="statAvgInc">Rs 0</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-icon">💸</div>
+        <div class="stat-mini-label" data-en="Avg Expense" data-si="සාමාන්‍ය වියදම්">Avg Expense</div>
+        <div class="stat-mini-val" id="statAvgExp">Rs 0</div>
+      </div>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="summary-grid">
+      <div class="sum-card income">
+        <div class="sum-label"><span class="dot"></span><span data-en="Income" data-si="ආදායම">Income</span></div>
+        <div class="sum-amount" id="totalIncome">Rs 0</div>
+        <div class="sum-sub" id="incomeCount">0 <span data-en="transactions" data-si="ගනුදෙනු">transactions</span></div>
+      </div>
+      <div class="sum-card expense">
+        <div class="sum-label"><span class="dot"></span><span data-en="Expenses" data-si="වියදම්">Expenses</span></div>
+        <div class="sum-amount" id="totalExpense">Rs 0</div>
+        <div class="sum-sub" id="expenseCount">0 <span data-en="transactions" data-si="ගනුදෙනු">transactions</span></div>
+      </div>
+      <div class="sum-card balance">
+        <div class="sum-label"><span class="dot"></span><span data-en="Balance" data-si="ශේෂය">Balance</span></div>
+        <div class="sum-amount" id="netBalance">Rs 0</div>
+        <div class="sum-sub" id="savingsRate">0% <span data-en="savings rate" data-si="සුරකින අනුපාතය">savings rate</span></div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="chart-section">
+      <div class="section-title">📈 <span data-en="Spending Overview" data-si="වියදම් විශ්ලේෂණය">Spending Overview</span></div>
+      <div class="donut-container" id="donutContainer">
+        <div class="empty-chart">
+          <div class="empty-chart-icon">📊</div>
+          <span data-en="Add expense transactions to see your spending breakdown" data-si="වියදම් ගනුදෙනු එකතු කර විශ්ලේෂණය බලන්න">Add expense transactions to see your spending breakdown</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <div class="section-title">📊 <span data-en="Spending by Category" data-si="වර්ගය අනුව වියදම්">Spending by Category</span></div>
+      <div id="chartBars">
+        <div class="empty-chart">
+          <span data-en="Add transactions to see your spending breakdown" data-si="ගනුදෙනු එකතු කර විශ්ලේෂණය බලන්න">Add transactions to see your spending breakdown</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSACTIONS -->
+    <div class="txn-section">
+      <div class="txn-header">
+        <div class="section-title" style="margin:0">📝 <span data-en="Transactions" data-si="ගනුදෙනු">Transactions</span></div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <div class="filter-row" id="filterRow">
+            <button class="filter-btn active" data-filter="all" data-en="All" data-si="සියලුම">All</button>
+            <button class="filter-btn" data-filter="income" data-en="Income" data-si="ආදායම">Income</button>
+            <button class="filter-btn" data-filter="expense" data-en="Expense" data-si="වියදම්">Expense</button>
+          </div>
+          <button class="btn-clear" id="clearAllBtn" data-en="Clear all" data-si="සියලුම මකන්න">Clear all</button>
+        </div>
+      </div>
+      <div class="txn-list" id="txnList"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN: FORM -->
+  <div class="form-panel">
+    <div class="form-tabs">
+      <button class="form-tab active income" data-type="income" id="tabIncome">+ <span data-en="Income" data-si="ආදායම">Income</span></button>
+      <button class="form-tab expense" data-type="expense" id="tabExpense">− <span data-en="Expense" data-si="වියදම්">Expense</span></button>
+    </div>
+    <div class="form-body">
+      <div class="form-group">
+        <label class="form-label" for="txnDesc" data-en="📝 Description" data-si="📝 විස්තරය">📝 Description</label>
+        <input type="text" id="txnDesc" placeholder="e.g. Salary, Groceries, CEB Bill...">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="txnAmount" data-en="💵 Amount (LKR)" data-si="💵 මුදල (රු.)">💵 Amount (LKR)</label>
+        <input type="number" id="txnAmount" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="txnCat" data-en="🏷️ Category" data-si="🏷️ වර්ගය">🏷️ Category</label>
+        <select id="txnCat"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="txnDate" data-en="📅 Date" data-si="📅 දිනය">📅 Date</label>
+          <input type="date" id="txnDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="txnTime" data-en="🕐 Time" data-si="🕐 වේලාව">🕐 Time</label>
+          <input type="time" id="txnTime">
+        </div>
+      </div>
+      <button class="btn-submit income" id="submitBtn" data-en="Add Income" data-si="ආදායම එකතු කරන්න">Add Income</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-icon">🗑️</div>
+    <div class="modal-title" data-en="Clear All Transactions?" data-si="සියලුම ගනුදෙනු මකන්නද?">Clear All Transactions?</div>
+    <div class="modal-text" data-en="This will permanently delete all your transaction history. This action cannot be undone." data-si="මෙය ඔබේ සියලුම ගනුදෙනු ඉතිහාසය ස්ථිර ලෙස මකා දමයි. මෙම ක්‍රියාව ආපසු හැරවිය නොහැක.">This will permanently delete all your transaction history. This action cannot be undone.</div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" id="modalCancel" data-en="Cancel" data-si="අවලංගු කරන්න">Cancel</button>
+      <button class="modal-btn confirm" id="modalConfirm" data-en="Delete All" data-si="සියලුම මකන්න">Delete All</button>
+    </div>
+  </div>
+</div>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4ad278"/>
+      <stop offset="100%" style="stop-color:#60a0f0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<script>
+// ========================
+// TRANSLATIONS
+// ========================
+const LANG = {
+  en: {
+    income: 'Income', expense: 'Expense', balance: 'Balance',
+    transactions: 'transactions', savingsRate: 'savings rate',
+    totalTxns: 'Total Txns', avgIncome: 'Avg Income', avgExpense: 'Avg Expense',
+    spendingOverview: 'Spending Overview', spendingByCategory: 'Spending by Category',
+    all: 'All', clearAll: 'Clear all',
+    description: '📝 Description', amount: '💵 Amount (LKR)',
+    category: '🏷️ Category', date: '📅 Date', time: '🕐 Time',
+    addIncome: 'Add Income', addExpense: 'Add Expense',
+    signIn: 'Sign In', signUp: 'Sign Up',
+    createAccount: 'Create Account', logout: 'Logout',
+    email: '📧 Email', password: '🔒 Password', fullName: '👤 Full Name',
+    sriLanka: 'Sri Lanka', personalMoneyManager: "Personal Money Manager",
+    financeTracker: 'FinanceTracker',
+    clearAllTitle: 'Clear All Transactions?',
+    clearAllText: 'This will permanently delete all your transaction history. This action cannot be undone.',
+    cancel: 'Cancel', deleteAll: 'Delete All',
+    language: 'Language: ',
+    noTransactions: 'No transactions yet.<br>Add your first one!',
+    addExpensesBreakdown: 'Add expense transactions to see your spending breakdown',
+    addTransactionsBreakdown: 'Add transactions to see your spending breakdown',
+    incomeAdded: 'Income added successfully!',
+    expenseAdded: 'Expense added successfully!',
+    txnDeleted: 'Transaction deleted',
+    allCleared: 'All transactions cleared',
+    enterDesc: '⚠️ Please enter a description',
+    enterAmount: '⚠️ Please enter a valid amount',
+    selectDate: '⚠️ Please select a date',
+    selectTime: '⚠️ Please select a time',
+    invalidCredentials: 'Invalid email or password',
+    emailExists: 'Email already registered',
+    fillAllFields: 'Please fill all fields',
+    passwordShort: 'Password must be at least 6 characters',
+    welcomeBack: 'Welcome back',
+    accountCreated: 'Account created successfully'
+  },
+  si: {
+    income: 'ආදායම', expense: 'වියදම්', balance: 'ශේෂය',
+    transactions: 'ගනුදෙනු', savingsRate: 'සුරකින අනුපාතය',
+    totalTxns: 'මුළු ගනුදෙනු', avgIncome: 'සාමාන්‍ය ආදායම', avgExpense: 'සාමාන්‍ය වියදම්',
+    spendingOverview: 'වියදම් විශ්ලේෂණය', spendingByCategory: 'වර්ගය අනුව වියදම්',
+    all: 'සියලුම', clearAll: 'සියලුම මකන්න',
+    description: '📝 විස්තරය', amount: '💵 මුදල (රු.)',
+    category: '🏷️ වර්ගය', date: '📅 දිනය', time: '🕐 වේලාව',
+    addIncome: 'ආදායම එකතු කරන්න', addExpense: 'වියදම් එකතු කරන්න',
+    signIn: 'පිවිසෙන්න', signUp: 'ලියාපදිංචි වන්න',
+    createAccount: 'ගිණුම සාදන්න', logout: 'ඉවත් වන්න',
+    email: '📧 විද්‍යුත් තැපෑල', password: '🔒 මුරපදය', fullName: '👤 සම්පූර්ණ නම',
+    sriLanka: 'ශ්‍රී ලංකාව', personalMoneyManager: 'පුද්ගලික මුදල් කළමනාකරු',
+    financeTracker: 'මුදල් තොට',
+    clearAllTitle: 'සියලුම ගනුදෙනු මකන්නද?',
+    clearAllText: 'මෙය ඔබේ සියලුම ගනුදෙනු ඉතිහාසය ස්ථිර ලෙස මකා දමයි. මෙම ක්‍රියාව ආපසු හැරවිය නොහැක.',
+    cancel: 'අවලංගු කරන්න', deleteAll: 'සියලුම මකන්න',
+    language: 'භාෂාව: ',
+    noTransactions: 'තවම ගනුදෙනු නැත.<br>ඔබේ පළමු ගනුදෙනුව එකතු කරන්න!',
+    addExpensesBreakdown: 'වියදම් ගනුදෙනු එකතු කර විශ්ලේෂණය බලන්න',
+    addTransactionsBreakdown: 'ගනුදෙනු එකතු කර විශ්ලේෂණය බලන්න',
+    incomeAdded: 'ආදායම සාර්ථකව එකතු විය!',
+    expenseAdded: 'වියදම් සාර්ථකව එකතු විය!',
+    txnDeleted: 'ගනුදෙනුව මකා දමන ලදී',
+    allCleared: 'සියලුම ගනුදෙනු මකා දමන ලදී',
+    enterDesc: '⚠️ කරුණාකර විස්තරයක් ඇතුළත් කරන්න',
+    enterAmount: '⚠️ කරුණාකර වලංගු මුදලක් ඇතුළත් කරන්න',
+    selectDate: '⚠️ කරුණාකර දිනයක් තෝරන්න',
+    selectTime: '⚠️ කරුණාකර වේලාවක් තෝරන්න',
+    invalidCredentials: 'වලංගු නොවන විද්‍යුත් තැපෑල හෝ මුරපදය',
+    emailExists: 'මෙම විද්‍යුත් තැපෑල දැනටමත් ලියාපදිංචි වී ඇත',
+    fillAllFields: 'කරුණාකර සියලු ක්ෂේත්‍ර පුරවන්න',
+    passwordShort: 'මුරපදය අකුරු 6කට වඩා වැඩි විය යුතුය',
+    welcomeBack: 'නැවත සාදරයෙන් පිළිගනිමු',
+    accountCreated: 'ගිණුම සාර්ථකව සාදන ලදී'
+  }
+};
+
+let currentLang = localStorage.getItem('ft_lang') || 'en';
+
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('ft_lang', lang);
+  document.body.classList.toggle('lang-si', lang === 'si');
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const text = el.getAttribute('data-' + lang);
+    if (text) {
+      if (el.tagName === 'INPUT' || el.tagName === 'BUTTON') {
+        if (el.placeholder) el.placeholder = text;
+        else el.textContent = text;
+      } else {
+        el.textContent = text;
+      }
+    }
+  });
+  document.getElementById('langLabel').textContent = lang === 'en' ? 'සිංහල' : 'English';
+  document.getElementById('authLangToggle').textContent = lang === 'en' ? 'සිංහල' : 'English';
+  render();
+}
+
+// ========================
+// AUTH SYSTEM
+// ========================
+let currentUser = JSON.parse(localStorage.getItem('ft_user') || 'null');
+
+function getUsers() {
+  return JSON.parse(localStorage.getItem('ft_users') || '[]');
+}
+function saveUsers(users) {
+  localStorage.setItem('ft_users', JSON.stringify(users));
+}
+function getUserTxns() {
+  if (!currentUser) return [];
+  const all = JSON.parse(localStorage.getItem('ft_txns_v3') || '{}');
+  return all[currentUser.email] || [];
+}
+function saveUserTxns(txns) {
+  if (!currentUser) return;
+  const all = JSON.parse(localStorage.getItem('ft_txns_v3') || '{}');
+  all[currentUser.email] = txns;
+  localStorage.setItem('ft_txns_v3', JSON.stringify(all));
+}
+
+function showAuth() {
+  document.getElementById('authScreen').classList.remove('hidden');
+  document.getElementById('userBadge').style.display = 'none';
+}
+function hideAuth() {
+  document.getElementById('authScreen').classList.add('hidden');
+  if (currentUser) {
+    document.getElementById('userBadge').style.display = 'flex';
+    document.getElementById('userName').textContent = currentUser.name;
+    document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+  }
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('authError');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+document.getElementById('tabSignIn').addEventListener('click', () => {
+  document.getElementById('tabSignIn').classList.add('active');
+  document.getElementById('tabSignUp').classList.remove('active');
+  document.getElementById('formSignIn').classList.add('active');
+  document.getElementById('formSignUp').classList.remove('active');
+});
+document.getElementById('tabSignUp').addEventListener('click', () => {
+  document.getElementById('tabSignUp').classList.add('active');
+  document.getElementById('tabSignIn').classList.remove('active');
+  document.getElementById('formSignUp').classList.add('active');
+  document.getElementById('formSignIn').classList.remove('active');
+});
+
+document.getElementById('btnSignIn').addEventListener('click', () => {
+  const email = document.getElementById('signinEmail').value.trim();
+  const password = document.getElementById('signinPassword').value;
+  const users = getUsers();
+  const user = users.find(u => u.email === email && u.password === password);
+  if (!user) {
+    showAuthError(LANG[currentLang].invalidCredentials);
+    return;
+  }
+  currentUser = user;
+  localStorage.setItem('ft_user', JSON.stringify(user));
+  txns = getUserTxns();
+  hideAuth();
+  render();
+  toast(LANG[currentLang].welcomeBack + ', ' + user.name + '!', '👋');
+});
+
+document.getElementById('btnSignUp').addEventListener('click', () => {
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  if (!name || !email || !password) {
+    showAuthError(LANG[currentLang].fillAllFields);
+    return;
+  }
+  if (password.length < 6) {
+    showAuthError(LANG[currentLang].passwordShort);
+    return;
+  }
+  let users = getUsers();
+  if (users.find(u => u.email === email)) {
+    showAuthError(LANG[currentLang].emailExists);
+    return;
+  }
+  const newUser = { name, email, password };
+  users.push(newUser);
+  saveUsers(users);
+  currentUser = newUser;
+  localStorage.setItem('ft_user', JSON.stringify(newUser));
+  txns = [];
+  saveUserTxns(txns);
+  hideAuth();
+  render();
+  toast(LANG[currentLang].accountCreated + '!', '🎉');
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  currentUser = null;
+  localStorage.removeItem('ft_user');
+  txns = [];
+  showAuth();
+  toast('Logged out', '👋');
+});
+
+document.getElementById('authLangToggle').addEventListener('click', () => {
+  setLanguage(currentLang === 'en' ? 'si' : 'en');
+});
+
+// ========================
+// APP DATA
+// ========================
+const CATS = {
+  income: ['Salary','Freelance','Business','Investment','Rental Income','Agriculture','Remittance','Gift','Other Income'],
+  expense: ['Food & Dining','Transport','Shopping','Bills & Utilities','Healthcare','Entertainment','Education','Rent/Mortgage','Groceries','Vehicle','Insurance','Donations','Other']
+};
+
+const CAT_ICONS = {
+  'Salary':'💼','Freelance':'💻','Business':'🏪','Investment':'📈','Rental Income':'🏠','Agriculture':'🌾','Remittance':'✈️','Gift':'🎁','Other Income':'💵',
+  'Food & Dining':'🍽️','Transport':'🚗','Shopping':'🛍️','Bills & Utilities':'⚡','Healthcare':'💊','Entertainment':'🎬','Education':'📚','Rent/Mortgage':'🏡','Groceries':'🛒','Vehicle':'🚙','Insurance':'🛡️','Donations':'🤝','Other':'📌'
+};
+
+const CAT_COLORS = {
+  'Food & Dining':'#f05060','Transport':'#60a0f0','Shopping':'#f0c050','Bills & Utilities':'#f0a050',
+  'Healthcare':'#a060f0','Entertainment':'#f050d0','Education':'#50f0c0','Rent/Mortgage':'#f08050',
+  'Groceries':'#4ad278','Vehicle':'#5080f0','Insurance':'#f0d050','Donations':'#f05080','Other':'#8fa494'
+};
+
+let txns = currentUser ? getUserTxns() : [];
+let currentType = 'income';
+let filter = 'all';
+
+const $ = id => document.getElementById(id);
+
+function fmt(n) {
+  return 'Rs ' + Math.abs(n).toLocaleString('en-LK', {minimumFractionDigits:0, maximumFractionDigits:0});
+}
+
+function fmtDateTime(d, t) {
+  if (!d) return '';
+  const date = new Date(d + (t ? 'T' + t : ''));
+  const dateStr = date.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  const timeStr = t ? date.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:true}) : '';
+  return timeStr ? dateStr + ' · ' + timeStr : dateStr;
+}
+
+function save() {
+  if (currentUser) saveUserTxns(txns);
+}
+
+function toast(msg, icon='✅') {
+  const container = $('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span class="toast-icon">${icon}</span>${msg}`;
+  container.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => {
+    t.classList.remove('show');
+    setTimeout(() => t.remove(), 400);
+  }, 2800);
+}
+
+function updateCats() {
+  const sel = $('txnCat');
+  sel.innerHTML = CATS[currentType].map(c => `<option value="${c}">${CAT_ICONS[c] || '📌'} ${c}</option>`).join('');
+}
+
+function setType(type) {
+  currentType = type;
+  $('tabIncome').classList.toggle('active', type === 'income');
+  $('tabIncome').classList.toggle('income', type === 'income');
+  $('tabExpense').classList.toggle('active', type === 'expense');
+  $('tabExpense').classList.toggle('expense', type === 'expense');
+  const btn = $('submitBtn');
+  btn.className = `btn-submit ${type}`;
+  btn.textContent = LANG[currentLang][type === 'income' ? 'addIncome' : 'addExpense'];
+  updateCats();
+}
+
+function renderSummary() {
+  const inc = txns.filter(t => t.type === 'income').reduce((s,t) => s + t.amount, 0);
+  const exp = txns.filter(t => t.type === 'expense').reduce((s,t) => s + t.amount, 0);
+  const bal = inc - exp;
+  const rate = inc > 0 ? Math.round((bal / inc) * 100) : 0;
+  const incCount = txns.filter(t=>t.type==='income').length;
+  const expCount = txns.filter(t=>t.type==='expense').length;
+
+  $('totalIncome').textContent = fmt(inc);
+  $('totalExpense').textContent = fmt(exp);
+  $('netBalance').textContent = (bal < 0 ? '−' : '') + fmt(bal);
+  $('incomeCount').innerHTML = incCount + ' ' + LANG[currentLang].transactions;
+  $('expenseCount').innerHTML = expCount + ' ' + LANG[currentLang].transactions;
+  $('savingsRate').textContent = rate + '% ' + LANG[currentLang].savingsRate;
+
+  $('statTotal').textContent = txns.length;
+  const avgInc = incCount > 0 ? Math.round(inc / incCount) : 0;
+  const avgExp = expCount > 0 ? Math.round(exp / expCount) : 0;
+  $('statAvgInc').textContent = fmt(avgInc);
+  $('statAvgExp').textContent = fmt(avgExp);
+}
+
+function renderDonut() {
+  const container = $('donutContainer');
+  const expenses = txns.filter(t => t.type === 'expense');
+  if (!expenses.length) {
+    container.innerHTML = `
+      <div class="empty-chart">
+        <div class="empty-chart-icon">📊</div>
+        ${LANG[currentLang].addExpensesBreakdown}
+      </div>`;
+    return;
+  }
+
+  const catTotals = {};
+  expenses.forEach(t => { catTotals[t.category] = (catTotals[t.category] || 0) + t.amount; });
+  const sorted = Object.entries(catTotals).sort((a,b) => b[1]-a[1]);
+  const total = sorted.reduce((s,[,v]) => s+v, 0);
+  const top6 = sorted.slice(0, 6);
+
+  let cumulative = 0;
+  const segments = top6.map(([cat, amt], i) => {
+    const pct = (amt / total) * 100;
+    const dash = (pct / 100) * 283;
+    const offset = 283 - ((cumulative / total) * 283);
+    cumulative += amt;
+    const color = CAT_COLORS[cat] || '#8fa494';
+    return `<circle cx="60" cy="60" r="45" fill="none" stroke="${color}" stroke-width="12"
+      stroke-dasharray="${dash} ${283-dash}" stroke-dashoffset="${offset}"
+      stroke-linecap="round" style="transition:all 0.8s cubic-bezier(0.16,1,0.3,1)">
+      <animate attributeName="stroke-dashoffset" from="283" to="${offset}" dur="1s" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>
+    </circle>`;
+  }).join('');
+
+  const legend = top6.map(([cat, amt], i) => {
+    const pct = Math.round((amt / total) * 100);
+    const color = CAT_COLORS[cat] || '#8fa494';
+    return `<div class="legend-item" style="animation-delay:${i*0.1}s">
+      <div class="legend-dot" style="background:${color}"></div>
+      <span>${CAT_ICONS[cat] || '📌'} ${cat}</span>
+      <span class="legend-val">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="donut-chart">
+      <svg width="160" height="160" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="45" fill="none" stroke="var(--bg3)" stroke-width="12"/>
+        ${segments}
+      </svg>
+      <div class="donut-center">
+        <div class="donut-center-label">${LANG[currentLang].expense}</div>
+        <div class="donut-center-val">${fmt(total)}</div>
+      </div>
+    </div>
+    <div class="donut-legend">${legend}</div>
+  `;
+}
+
+function renderChart() {
+  const el = $('chartBars');
+  const expenses = txns.filter(t => t.type === 'expense');
+  if (!expenses.length) {
+    el.innerHTML = `<div class="empty-chart">${LANG[currentLang].addTransactionsBreakdown}</div>`;
+    return;
+  }
+  const catTotals = {};
+  expenses.forEach(t => { catTotals[t.category] = (catTotals[t.category] || 0) + t.amount; });
+  const sorted = Object.entries(catTotals).sort((a,b) => b[1]-a[1]).slice(0,6);
+  const max = sorted[0][1];
+  const total = sorted.reduce((s,[,v]) => s+v, 0);
+
+  el.innerHTML = sorted.map(([cat, amt], i) => {
+    const pct = Math.round((amt / max) * 100);
+    const pctOfTotal = Math.round((amt / total) * 100);
+    const color = CAT_COLORS[cat] || '#8fa494';
+    return `
+      <div class="bar-row" style="animation-delay:${i*0.08}s">
+        <div class="bar-label">${CAT_ICONS[cat] || '📌'} ${cat}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:0%;--bar-clr:${color};--bar-clr2:${color}88" data-width="${pct}%"></div></div>
+        <div class="bar-val">${fmt(amt)}</div>
+        <div class="bar-pct">${pctOfTotal}%</div>
+      </div>`;
+  }).join('');
+
+  setTimeout(() => {
+    el.querySelectorAll('.bar-fill').forEach(bar => {
+      bar.style.width = bar.dataset.width;
+    });
+  }, 100);
+}
+
+function renderList() {
+  const el = $('txnList');
+  let list = [...txns].sort((a,b) => {
+    const da = new Date(a.date + (a.time ? 'T' + a.time : ''));
+    const db = new Date(b.date + (b.time ? 'T' + b.time : ''));
+    return db - da;
+  });
+  if (filter !== 'all') list = list.filter(t => t.type === filter);
+
+  if (!list.length) {
+    el.innerHTML = `<div class="txn-empty"><div class="big-icon">📭</div>${LANG[currentLang].noTransactions}</div>`;
+    return;
+  }
+
+  el.innerHTML = list.map((t, i) => `
+    <div class="txn-item" style="--item-clr:${t.type==='income'?'var(--accent)':'var(--red)'};animation-delay:${Math.min(i*0.05,0.4)}s">
+      <div class="txn-icon ${t.type}">${CAT_ICONS[t.category] || '📌'}</div>
+      <div class="txn-info">
+        <div class="txn-desc">${t.desc}</div>
+        <div class="txn-meta">
+          <span>${fmtDateTime(t.date, t.time)}</span>
+          <span class="txn-cat-badge">${t.category}</span>
+        </div>
+      </div>
+      <div class="txn-amount ${t.type}">${t.type === 'income' ? '+' : '−'}${fmt(t.amount)}</div>
+      <button class="txn-del tooltip" onclick="deleteTxn('${t.id}')" data-tip="Delete" title="Delete">✕</button>
+    </div>`).join('');
+}
+
+function render() { renderSummary(); renderDonut(); renderChart(); renderList(); }
+
+function deleteTxn(id) {
+  txns = txns.filter(t => t.id !== id);
+  save(); render();
+  toast(LANG[currentLang].txnDeleted, '🗑️');
+}
+
+$('submitBtn').addEventListener('click', () => {
+  const desc = $('txnDesc').value.trim();
+  const amount = parseFloat($('txnAmount').value);
+  const category = $('txnCat').value;
+  const date = $('txnDate').value;
+  const time = $('txnTime').value;
+
+  if (!desc) { toast(LANG[currentLang].enterDesc, '⚠️'); return; }
+  if (!amount || amount <= 0) { toast(LANG[currentLang].enterAmount, '⚠️'); return; }
+  if (!date) { toast(LANG[currentLang].selectDate, '⚠️'); return; }
+  if (!time) { toast(LANG[currentLang].selectTime, '⚠️'); return; }
+
+  const txn = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+    type: currentType, desc, amount, category, date, time
+  };
+
+  txns.push(txn);
+  save(); render();
+
+  $('txnDesc').value = '';
+  $('txnAmount').value = '';
+  $('txnTime').value = '';
+
+  toast(currentType === 'income' ? LANG[currentLang].incomeAdded : LANG[currentLang].expenseAdded, currentType === 'income' ? '💰' : '💸');
+});
+
+$('tabIncome').addEventListener('click', () => setType('income'));
+$('tabExpense').addEventListener('click', () => setType('expense'));
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    filter = btn.dataset.filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderList();
+  });
+});
+
+$('clearAllBtn').addEventListener('click', () => {
+  if (!txns.length) return;
+  $('confirmModal').classList.add('show');
+});
+
+$('modalCancel').addEventListener('click', () => {
+  $('confirmModal').classList.remove('show');
+});
+
+$('modalConfirm').addEventListener('click', () => {
+  txns = []; save(); render();
+  $('confirmModal').classList.remove('show');
+  toast(LANG[currentLang].allCleared, '🗑️');
+});
+
+$('confirmModal').addEventListener('click', (e) => {
+  if (e.target === $('confirmModal')) $('confirmModal').classList.remove('show');
+});
+
+$('langToggle').addEventListener('click', () => {
+  setLanguage(currentLang === 'en' ? 'si' : 'en');
+});
+
+function createParticles() {
+  const container = $('particles');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (6 + Math.random() * 8) + 's';
+    p.style.animationDelay = Math.random() * 8 + 's';
+    p.style.width = (2 + Math.random() * 3) + 'px';
+    p.style.height = p.style.width;
+    p.style.opacity = 0.3 + Math.random() * 0.4;
+    container.appendChild(p);
+  }
+}
+
+// Init
+const today = new Date();
+$('txnDate').value = today.toISOString().split('T')[0];
+const now = new Date();
+$('txnTime').value = now.toTimeString().slice(0,5);
+$('headerMonth').textContent = today.toLocaleDateString('en-US', {month:'long', year:'numeric'});
+updateCats();
+createParticles();
+setLanguage(currentLang);
+
+if (currentUser) {
+  hideAuth();
+  txns = getUserTxns();
+} else {
+  showAuth();
+}
+
+render();
+</script>
+
+<!-- FOOTER -->
+<div class="app-footer">
+  <div class="app-footer-text">
+    <span>Made with</span>
+    <span class="app-footer-heart">❤️</span>
+    <span>in</span>
+    <span>🇱🇰</span>
+    <span>by</span>
+    <span class="app-footer-brand">Sameera</span>
+  </div>
+</div>
+
+</body>
+</html>
